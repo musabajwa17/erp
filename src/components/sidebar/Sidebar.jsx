@@ -674,7 +674,7 @@ export default function Sidebar() {
                 case "Inventory Management":
                   return <InventaryManagement />;
                 case "Pest Monitoring":
-                // return <PestManagement />;
+                 return <PestManagement />;
                 case "Harvest Scheduling":
                   return <Harvestschedule />
                 case "Shipping and Logistics":
