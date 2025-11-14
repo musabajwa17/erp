@@ -85,7 +85,7 @@ const FieldMapping = forwardRef(({ onAreaData, searchLocation }, ref) => {
 
   const [areaInfo, setAreaInfo] = useState(null);
   const [selectedTool, setSelectedTool] = useState("hand");
-  const [areaUnit, setAreaUnit] = useState("ha");
+  const [areaUnit, setAreaUnit] = useState("ac");
   const [drawingManager, setDrawingManager] = useState(null);
   const [mapCenter, setMapCenter] = useState(initialCenter);
   const [searchMarker, setSearchMarker] = useState(null);
@@ -586,7 +586,7 @@ export default FieldMapping;
 function MapDetail({
   mapAreaInfo = {},
   setSelectedUnit = () => {},
-  selectedUnit = "ha",
+  selectedUnit = "ac",
   farmId = null,
   getAreaInSelectedUnit = () => 0,
   postFields = async () => {},
@@ -594,6 +594,7 @@ function MapDetail({
 }) {
   const [formData, setFormData] = useState({
     farm_name: "",
+    notes: "",
     area: getAreaInSelectedUnit(),
     unit: selectedUnit,
     farm_id: farmId,
@@ -621,10 +622,14 @@ function MapDetail({
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
   };
+    const handleNotes = (e) => {
+    const { name, value } = e.target;
+    setFormData((p) => ({ ...p, [name]: value }));
+  };
 
   const handleSubmit = async () => {
     if (!formData.farm_name) return alert("Please enter farm name");
-
+  console.log(formData)
     const payload = {
       ...formData,
       shape_type: mapAreaInfo.type || "rectangle",
@@ -692,7 +697,7 @@ function MapDetail({
             </span>
           </h2>
           <div className="flex gap-2">
-            {["ha", "ac", "km2"].map((unit) => (
+            {["ac", "ha", "km2"].map((unit) => (
               <button
                 key={unit}
                 onClick={() => setSelectedUnit(unit)}
@@ -717,10 +722,10 @@ function MapDetail({
                 {
                   label: "Area",
                   value: mapAreaInfo.areaKm2
-                    ? selectedUnit === "ha"
+                    ? selectedUnit === "ac"
+                      ? ` ${(mapAreaInfo.areaKm2 * 247.105).toFixed(2)} ac`
+                      : selectedUnit === "ha"
                       ? `${(mapAreaInfo.areaKm2 * 100).toFixed(2)} ha`
-                      : selectedUnit === "ac"
-                      ? `${(mapAreaInfo.areaKm2 * 247.105).toFixed(2)} ac`
                       : `${mapAreaInfo.areaKm2} km²`
                     : "-",
                   icon: "📊",
@@ -776,6 +781,18 @@ function MapDetail({
                   </span>
                 )}
               </div>
+              <div className="mt-3">
+              <label className="text-sm text-gray-600 mb-3 ms-2 font-bold uppercase tracking-wider flex items-center gap-2">  
+                Notes
+              </label>
+              <input
+                name="notes"
+                value={formData.notes}
+                onChange={handleNotes}
+                className="block w-full rounded-2xl border-2 border-emerald-200 focus:ring-4 focus:ring-emerald-300 focus:border-emerald-500 p-4 text-base shadow-lg transition-all duration-300 hover:shadow-xl"
+                placeholder="Enter any notes for your farm..."
+              />
+            </div>
             </div>
           </div>
         ) : (

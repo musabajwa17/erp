@@ -1,312 +1,558 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from "next/image";
-import { 
-  MdPlayArrow, 
-  MdClose, 
-  MdTrendingUp, 
-  MdLocationOn, 
-  MdVerified,
-  MdArrowForward 
-} from 'react-icons/md';
-import { 
-  FaArrowRight, 
-  FaUsers, 
-  FaLeaf, 
-  FaStar,
-  FaQuoteLeft 
-} from 'react-icons/fa';
-import ProtectedPage from '@/components/contact/ProtectedPage/AuthorizedPage';
+import React, { useState } from "react";
+import { Upload, Leaf, TrendingUp, AlertCircle, CheckCircle2, FileText } from "lucide-react";
 
-function Home() {
-  const [videoOpen, setVideoOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+export default function SoilHealthTracker() {
+  const [mode, setMode] = useState("manual");
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
+  const [formData, setFormData] = useState({
+    pH: "",
+    EC: "",
+    N: "",
+    P: "",
+    K: ""
+  });
 
-  return (
-    <ProtectedPage>
-    <div className=' flex justify-center items-center bg-gradient-to-br from-blue-50 via-green-50 to-teal-50'>
-        {/* <Sidebar/> */}
-    <div className="min-h-screen bg-white overflow-hidden">
-      <DemoVideo videoOpen={videoOpen} setVideoOpen={setVideoOpen} />
-      {/* <Navigation /> */}
-      {/* <Nav/> */}
-      <HeroSection videoOpen={videoOpen} setVideoOpen={setVideoOpen} isVisible={isVisible} />
-      {/* <FeaturesSection /> */}
-    </div>
-    </div>
-    </ProtectedPage>
-  );
-}
-
-export default Home;
-
-// function Navigation() {
-//   return (
-//     <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-lg border-b border-gray-100 z-40">
-//       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-//         <div className="flex justify-between items-center h-20">
-//           <div className="flex items-center space-x-3">
-//             <div className="w-10 h-10 rounded-xl flex items-center justify-center">
-//               {/* <FaLeaf className="text-white text-lg" /> */}
-//               <Image src="/esslogo.png" alt="ERP Logo" width={220} height={50} />
-//               </div>
-//             <span className="text-2xl font-bold text-gray-900">
-//               Crop <span className="text-[var(--color)]">Konnect</span>
-//             </span>
-//           </div>
-          
-//           <div className="hidden md:flex items-center space-x-8">
-        
-          
-//             {/* <ButtonLinks lable={'Login'} icon={ <User size={16}/> } pY={10} pX={14} text={13}  linksUrl={'/login'}/> */}
-//           </div>
-//         </div>
-//       </div>
-//     </nav>
-//   );
-// }
-
-function HeroSection({ videoOpen, setVideoOpen, isVisible }) {
-  return (
-    <section className="relative h-161 flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--color)] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald[var(--color)] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto lg:px-8">
-        <div className="grid lg:grid-cols-2  gap-12 items-center">
-          {/* Content Section */}
-          <div className={`space-y-8 transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            {/* Badge */}
-            <div className="inline-flex items-center px-4 py-2 bg-[var(--color)] rounded-full mt-4">
-              <div className="w-2 h-2 bg-white rounded-full mr-2 "></div>
-              <span className="text-white text-sm">Agricultural Innovation Platform</span>
-            </div>
-
-            {/* Main Heading */}
-            <div className='lg:order-1 order-2 '>
-              <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight">
-                <span className="relative">
-                  <span className="text-[var(--color)]">
-                    Crop
-                  </span>
-                  {/* <div className="absolute -inset-1 bg-[var(--color)] rounded-lg blur opacity-20 group-hover:opacity-75 transition duration-1000"></div> */}
-                </span>
-                {' '}
-                <span className="text-amber-800">Konnect</span>
-              </h1>
-              <p className="text-lg text-gray-600 mt-6 leading-relaxed max-w-2xl">
-                Revolutionize your farming journey with our cutting-edge platform. 
-                Connect with opportunities, enhance productivity, and build lasting 
-                agricultural networks.
-              </p>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 lg:order-2 order-1">
-              {/* <ButtonLinks lable={"Register Now"}  pY={10} pX={14} text={16} linksUrl={'/registration'} icon={<MdArrowForward className="ml-2 group-hover:translate-x-1 transition-transform" />}/>
-              <Button lable={"Watch Demo"} icon={<MdPlayArrow className='text-2xl'/>}   onClick={() => setVideoOpen(true)}/>
-               */}
-             
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 pt-8 border-t border-gray-200">
-              <div className="text-center group ">
-                <div className="text-3xl font-bold text-[var(--color)]">10K+</div>
-                <div className="text-gray-600 mt-1 font-medium">Active Farmers</div>
-              </div>
-              <div className="text-center group ">
-                <div className="text-3xl font-bold text-[var(--color)]">50+</div>
-                <div className="text-gray-600 mt-1 font-medium">Districts</div>
-              </div>
-              <div className="text-center group ">
-                <div className="text-3xl font-bold text-[var(--color)]">95%</div>
-                <div className="text-gray-600 mt-1 font-medium">Success Rate</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Image Section */}
-          <div className={`relative transform transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-            <div className="relative">
-              {/* Decorative Elements */}
-              <div className="absolute -top-4 -left-4 w-72 h-72 bg-[var(--color)] rounded-3xl transform rotate-6 opacity-20"></div>
-              <div className="absolute -bottom-4 -right-4 w-72 h-72 bg-amber-800 rounded-3xl transform -rotate-6 opacity-20"></div>
-              
-              {/* Main Image */}
-              <div className="relative bg-white rounded-3xl shadow-2xl p-3  ">
-                <img 
-                  src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&h=600&fit=crop&crop=center" 
-                  alt="Modern Agriculture"
-                  className="w-full h-96 object-cover rounded-2xl"
-                />
-                
-                {/* Floating Cards */}
-                <div className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-                  <div className="flex items-center space-x-2">
-                    <MdTrendingUp className="text-green-500 text-xl" />
-                    <div>
-                      <div className="text-sm font-semibold text-gray-900">+24%</div>
-                      <div className="text-xs text-gray-500">Yield Increase</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
-                  <div className="flex items-center space-x-2">
-                    <MdVerified className="text-blue-500 text-xl" />
-                    <div>
-                      <div className="text-sm font-semibold text-gray-900">Verified</div>
-                      <div className="text-xs text-gray-500">Quality Assured</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FeaturesSection() {
-  const features = [
-    {
-      icon: FaUsers,
-      title: "Connect & Network",
-      description: "Build meaningful connections with farmers, suppliers, and agricultural experts worldwide.",
-      color: "text-blue-500",
-      bgColor: "bg-blue-100"
-    },
-    {
-      icon: MdTrendingUp,
-      title: "Boost Productivity",
-      description: "Access cutting-edge tools and insights to maximize your agricultural output and efficiency.",
-      color: "text-green-500",
-      bgColor: "bg-green-100"
-    },
-    {
-      icon: MdLocationOn,
-      title: "Market Access",
-      description: "Discover new markets and opportunities to sell your products at competitive prices.",
-      color: "text-purple-500",
-      bgColor: "bg-purple-100"
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: null }));
     }
-  ];
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.pH || formData.pH < 0 || formData.pH > 14) {
+      newErrors.pH = "pH must be between 0 and 14";
+    }
+    if (!formData.EC || formData.EC < 0) {
+      newErrors.EC = "EC must be a positive number";
+    }
+    if (!formData.N || formData.N < 0) {
+      newErrors.N = "Nitrogen must be a positive number";
+    }
+    if (!formData.P || formData.P < 0) {
+      newErrors.P = "Phosphorus must be a positive number";
+    }
+    if (!formData.K || formData.K < 0) {
+      newErrors.K = "Potassium must be a positive number";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      // Validate file type
+      const validTypes = ['.csv', '.xlsx', '.xls'];
+      const fileExtension = selectedFile.name.substring(selectedFile.name.lastIndexOf('.')).toLowerCase();
+      
+      if (!validTypes.includes(fileExtension)) {
+        alert("Please upload a valid CSV or Excel file (.csv, .xlsx, .xls)");
+        e.target.value = null;
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        alert("File size must be less than 5MB");
+        e.target.value = null;
+        return;
+      }
+
+      setFile(selectedFile);
+      setFileName(selectedFile.name);
+    }
+  };
+
+  const onSubmitManual = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const mockResult = {
+        status: "success",
+        data: {
+          pH: parseFloat(formData.pH),
+          EC: parseFloat(formData.EC),
+          N: parseFloat(formData.N),
+          P: parseFloat(formData.P),
+          K: parseFloat(formData.K)
+        },
+        analysis: {
+          soilHealth: calculateSoilHealth(formData),
+          recommendations: getRecommendations(formData)
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      setResult(mockResult);
+      
+      // Reset form
+      setFormData({ pH: "", EC: "", N: "", P: "", K: "" });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to submit soil data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSubmitFile = async () => {
+    if (!file) {
+      alert("Please upload a file first.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Create FormData
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("mode", "upload");
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const mockResult = {
+        status: "success",
+        fileName: file.name,
+        recordsProcessed: 15,
+        analysis: {
+          averagePH: 6.8,
+          soilHealth: "Good",
+          recommendations: [
+            "Maintain current nutrient levels",
+            "Monitor pH regularly",
+            "Consider organic matter addition"
+          ]
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      setResult(mockResult);
+      setFile(null);
+      setFileName("");
+      
+      // Reset file input
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) fileInput.value = null;
+      
+    } catch (error) {
+      console.error(error);
+      alert("Failed to upload soil file. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateSoilHealth = (data) => {
+    const ph = parseFloat(data.pH);
+    const n = parseFloat(data.N);
+    const p = parseFloat(data.P);
+    const k = parseFloat(data.K);
+
+    let score = 0;
+    
+    // pH scoring (optimal 6.0-7.5)
+    if (ph >= 6.0 && ph <= 7.5) score += 25;
+    else if (ph >= 5.5 && ph <= 8.0) score += 15;
+    else score += 5;
+
+    // NPK scoring (simplified)
+    if (n >= 20 && n <= 50) score += 25;
+    else if (n >= 10 && n <= 60) score += 15;
+    else score += 5;
+
+    if (p >= 15 && p <= 40) score += 25;
+    else if (p >= 8 && p <= 50) score += 15;
+    else score += 5;
+
+    if (k >= 100 && k <= 300) score += 25;
+    else if (k >= 50 && k <= 350) score += 15;
+    else score += 5;
+
+    if (score >= 80) return "Excellent";
+    if (score >= 60) return "Good";
+    if (score >= 40) return "Fair";
+    return "Needs Improvement";
+  };
+
+  const getRecommendations = (data) => {
+    const recommendations = [];
+    const ph = parseFloat(data.pH);
+    const n = parseFloat(data.N);
+    const p = parseFloat(data.P);
+    const k = parseFloat(data.K);
+
+    if (ph < 6.0) recommendations.push("Apply lime to increase pH");
+    if (ph > 7.5) recommendations.push("Apply sulfur to decrease pH");
+    if (n < 20) recommendations.push("Add nitrogen-rich fertilizer");
+    if (p < 15) recommendations.push("Apply phosphorus fertilizer");
+    if (k < 100) recommendations.push("Add potassium fertilizer");
+    
+    if (recommendations.length === 0) {
+      recommendations.push("Soil health is optimal. Maintain current practices.");
+    }
+
+    return recommendations;
+  };
 
   return (
-    <section id="features" className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Why Choose <span className="text-green-600">Crop Konnect</span>?
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Our platform combines innovative technology with agricultural expertise 
-            to deliver unmatched value to farmers across the globe.
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        {/* <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-4">
+            <Leaf className="w-12 h-12 text-green-600" />
+          </div>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">Soil Health Tracker</h1>
+          <p className="text-gray-600">Monitor and analyze your soil's nutrient levels</p>
+        </div> */}
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <div key={index} className="group p-8 bg-gray-50 rounded-3xl hover:bg-white hover:shadow-xl transition-all duration-500 border border-transparent hover:border-gray-200">
-              <div className={`w-16 h-16 ${feature.bgColor} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                <feature.icon className={`text-2xl ${feature.color}`} />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-              <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TestimonialsSection() {
-  return (
-    <section className="py-24 bg-gradient-to-br from-green-50 to-emerald-50">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Trusted by <span className="text-green-600">Farmers Everywhere</span>
-          </h2>
-        </div>
-
-        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12">
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="flex-1">
-              <FaQuoteLeft className="text-3xl text-green-500 mb-4" />
-              <p className="text-xl text-gray-700 leading-relaxed mb-6">
-                "Crop Konnect transformed my farming business completely. The connections 
-                I've made and the knowledge I've gained have increased my yield by 40% 
-                in just one season."
-              </p>
-              <div className="flex items-center">
-                <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" 
-                  alt="Testimonial"
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <div className="font-semibold text-gray-900">Ahmed Hassan</div>
-                  <div className="text-gray-500 text-sm">Wheat Farmer, Punjab</div>
-                </div>
-                <div className="ml-auto flex">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar key={i} className="text-yellow-400 text-sm" />
-                  ))}
-                </div>
-              </div>
-            </div>
-            
-            <div className="w-full md:w-96">
-              <img 
-                src="https://images.unsplash.com/photo-1595113316349-9fa4eb24f884?w=400&h=300&fit=crop" 
-                alt="Happy Farmer"
-                className="w-full h-64 object-cover rounded-2xl shadow-lg"
-              />
+        {/* Main Card */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Mode Selection */}
+          <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6">
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => {
+                  setMode("manual");
+                  setResult(null);
+                }}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  mode === "manual"
+                    ? "bg-white text-green-600 shadow-lg scale-105"
+                    : "bg-white/20 text-white hover:bg-white/30"
+                }`}
+              >
+                <TrendingUp className="w-5 h-5" />
+                Track Manually
+              </button>
+              <button
+                onClick={() => {
+                  setMode("upload");
+                  setResult(null);
+                }}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  mode === "upload"
+                    ? "bg-white text-blue-600 shadow-lg scale-105"
+                    : "bg-white/20 text-white hover:bg-white/30"
+                }`}
+              >
+                <Upload className="w-5 h-5" />
+                Upload Lab Report
+              </button>
             </div>
           </div>
+
+          <div className="p-8">
+            {/* Manual Form */}
+            {mode === "manual" && (
+              <div className="space-y-5">
+                <div className="grid md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      pH Level
+                    </label>
+                    <input
+                      type="number"
+                      name="pH"
+                      step="0.01"
+                      value={formData.pH}
+                      onChange={handleInputChange}
+                      placeholder="0.00 - 14.00"
+                      className={`w-full border-2 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
+                        errors.pH ? "border-red-500" : "border-gray-200"
+                      }`}
+                    />
+                    {errors.pH && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.pH}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      EC (Electrical Conductivity)
+                    </label>
+                    <input
+                      type="number"
+                      name="EC"
+                      step="0.01"
+                      value={formData.EC}
+                      onChange={handleInputChange}
+                      placeholder="dS/m"
+                      className={`w-full border-2 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
+                        errors.EC ? "border-red-500" : "border-gray-200"
+                      }`}
+                    />
+                    {errors.EC && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.EC}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Nitrogen (N)
+                    </label>
+                    <input
+                      type="number"
+                      name="N"
+                      step="0.01"
+                      value={formData.N}
+                      onChange={handleInputChange}
+                      placeholder="mg/kg"
+                      className={`w-full border-2 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
+                        errors.N ? "border-red-500" : "border-gray-200"
+                      }`}
+                    />
+                    {errors.N && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.N}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Phosphorus (P)
+                    </label>
+                    <input
+                      type="number"
+                      name="P"
+                      step="0.01"
+                      value={formData.P}
+                      onChange={handleInputChange}
+                      placeholder="mg/kg"
+                      className={`w-full border-2 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
+                        errors.P ? "border-red-500" : "border-gray-200"
+                      }`}
+                    />
+                    {errors.P && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.P}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Potassium (K)
+                    </label>
+                    <input
+                      type="number"
+                      name="K"
+                      step="0.01"
+                      value={formData.K}
+                      onChange={handleInputChange}
+                      placeholder="mg/kg"
+                      className={`w-full border-2 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
+                        errors.K ? "border-red-500" : "border-gray-200"
+                      }`}
+                    />
+                    {errors.K && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" />
+                        {errors.K}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSubmitManual(e);
+                  }}
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-5 h-5" />
+                      Analyze Soil Health
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Upload Form */}
+            {mode === "upload" && (
+              <div className="space-y-5">
+                <div className="border-3 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-500 transition-all duration-300 bg-gray-50">
+                  <Upload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600 mb-4">
+                    Upload your lab report in CSV or Excel format
+                  </p>
+                  <input
+                    type="file"
+                    accept=".csv, .xlsx, .xls"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-all cursor-pointer"
+                  >
+                    Choose File
+                  </label>
+                  {fileName && (
+                    <div className="mt-4 flex items-center justify-center gap-2 text-green-600">
+                      <FileText className="w-5 h-5" />
+                      <span className="font-medium">{fileName}</span>
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-500 mt-4">
+                    Supported formats: CSV, XLSX, XLS (Max 5MB)
+                  </p>
+                </div>
+
+                <button
+                  onClick={onSubmitFile}
+                  disabled={!file || loading}
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5" />
+                      Submit File
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Result Display */}
+            {result && (
+              <div className="mt-8 p-6 border-2 border-green-200 rounded-xl bg-gradient-to-br from-green-50 to-blue-50 animate-fadeIn">
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle2 className="w-6 h-6 text-green-600" />
+                  <h3 className="text-xl font-bold text-gray-800">Analysis Results</h3>
+                </div>
+
+                {mode === "manual" && result.analysis && (
+                  <div className="space-y-4">
+                    <div className="bg-white p-4 rounded-lg shadow">
+                      <p className="text-sm text-gray-600 mb-1">Soil Health Status</p>
+                      <p className={`text-2xl font-bold ${
+                        result.analysis.soilHealth === "Excellent" ? "text-green-600" :
+                        result.analysis.soilHealth === "Good" ? "text-blue-600" :
+                        result.analysis.soilHealth === "Fair" ? "text-yellow-600" :
+                        "text-red-600"
+                      }`}>
+                        {result.analysis.soilHealth}
+                      </p>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg shadow">
+                      <p className="text-sm font-semibold text-gray-700 mb-2">Recommendations:</p>
+                      <ul className="space-y-2">
+                        {result.analysis.recommendations.map((rec, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-gray-700">
+                            <span className="text-green-500 font-bold">•</span>
+                            <span>{rec}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {mode === "upload" && (
+                  <div className="space-y-4">
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div className="bg-white p-4 rounded-lg shadow text-center">
+                        <p className="text-sm text-gray-600 mb-1">Records Processed</p>
+                        <p className="text-2xl font-bold text-blue-600">{result.recordsProcessed}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg shadow text-center">
+                        <p className="text-sm text-gray-600 mb-1">Average pH</p>
+                        <p className="text-2xl font-bold text-green-600">{result.analysis.averagePH}</p>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg shadow text-center">
+                        <p className="text-sm text-gray-600 mb-1">Soil Health</p>
+                        <p className="text-2xl font-bold text-green-600">{result.analysis.soilHealth}</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-lg shadow">
+                      <p className="text-sm font-semibold text-gray-700 mb-2">Recommendations:</p>
+                      <ul className="space-y-2">
+                        {result.analysis.recommendations.map((rec, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-gray-700">
+                            <span className="text-green-500 font-bold">•</span>
+                            <span>{rec}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
 
-function DemoVideo({ videoOpen, setVideoOpen }) {
-  if (!videoOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl">
-        <button
-          onClick={() => setVideoOpen(false)}
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-black bg-opacity-50 hover:bg-opacity-75 rounded-full flex items-center justify-center text-white transition-all"
-        >
-          <MdClose className="text-xl" />
-        </button>
-        
-        <div className="aspect-video">
-          <iframe
-            width="100%"
-            height="100%"
-            src="https://www.youtube.com/embed/0GmDPAlwifs?si=R-OnhTq0DDi2xJqG&autoplay=1"
-            title="Crop Konnect Demo"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-          />
+        {/* Info Card */}
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-6">
+          <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            Quick Reference Guide
+          </h4>
+          <div className="grid md:grid-cols-3 gap-4 text-sm text-blue-800">
+            <div>
+              <p className="font-semibold">Optimal pH:</p>
+              <p>6.0 - 7.5</p>
+            </div>
+            <div>
+              <p className="font-semibold">Nitrogen (N):</p>
+              <p>20-50 mg/kg</p>
+            </div>
+            <div>
+              <p className="font-semibold">Phosphorus (P):</p>
+              <p>15-40 mg/kg</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
