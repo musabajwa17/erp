@@ -18,6 +18,8 @@ import {
   User,
   Settings,
   LogOut,
+  AreaChartIcon,
+  LandPlot,
 } from "lucide-react";
 import Image from "next/image";
 // dashboard content components
@@ -32,6 +34,7 @@ import InventaryManagement from "../dashboard/InventaryManagement";
 import WeatherForecast from "../dashboard/WeatherForecast";
 import CropSowing from "../dashboard/CropSowing";
 import PestManagement from "../dashboard/PestManagement";
+import LandPreparation from "../dashboard/LandPreparation"
 import Link from "next/link";
 import Harvestschedule from "../dashboard/harvestschedule";
 import Shippingandlogistics from "../dashboard/shippingandlogistics";
@@ -55,6 +58,7 @@ export default function Sidebar() {
         { name: "My Fields", icon: MapPin },
         { name: "Soil Health", icon: Droplet },
         { name: "Contract Mapping", icon: FileText },
+        { name: "Land Preparation", icon: AreaChartIcon },
       ],
       
     },
@@ -271,6 +275,7 @@ export default function Sidebar() {
                       "Crop Management": Layers,
                       "Inventory Management": FileText,
                       "Pest Monitoring": Bug,
+                      "Land Preparation": LandPlot,
                     };
 
                     const key = selected || "Dashboard";
@@ -293,6 +298,7 @@ export default function Sidebar() {
                       "Crop Management": ["Crop Management", "Plan and track sowing activities"],
                       "Inventory Management": ["Inventory Management", "Track inventory and supplies"],
                       "Pest Monitoring": ["Pest Monitoring", "Monitor pests and interventions"],
+                      "Land Preparation": ["Land Preparation", "Prepare your Land with digital tech"],
                     };
 
                     const key = selected || "Dashboard";
@@ -389,6 +395,8 @@ export default function Sidebar() {
                   return <Shippingandlogistics />
                 case "Farm Analytics Dashboard":
                   return <FarmAnalyticsDashboard/>
+                case "Land Preparation":
+                  return <LandPreparation />
                 default:
                   return <Content />;
               }
