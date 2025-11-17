@@ -23,8 +23,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 // dashboard content components
-import Fields from "../dashboard/Fields";
-import FieldMapping from "../dashboard/FieldMapping";
+import dynamic from "next/dynamic";
+
+// Leaflet map must only render on client
+const FieldMapping = dynamic(
+  () => import("@/components/dashboard/FieldMapping"),
+  { ssr: false }
+);
 import Content from "../dashboard/Content";
 import SoilHealth from "../dashboard/SoilHealth";
 import ContractMapping from "../dashboard/ContractMapping";
