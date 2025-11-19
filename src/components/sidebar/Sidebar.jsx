@@ -44,6 +44,7 @@ import Link from "next/link";
 import Harvestschedule from "../dashboard/harvestschedule";
 import Shippingandlogistics from "../dashboard/shippingandlogistics";
 import FarmAnalyticsDashboard from "../dashboard/FarmAnalyticsDashboard";
+import Fields from "../dashboard/Fields"
 export default function Sidebar() {
   const [openStage, setOpenStage] = useState("Stage 1 (Pre-Season)");
   const [selected, setSelected] = useState(null);
@@ -61,9 +62,9 @@ export default function Sidebar() {
       items: [
         { name: "Field Mapping", icon: Layers },
         { name: "My Fields", icon: MapPin },
+        { name: "Land Preparation", icon: AreaChartIcon },
         { name: "Soil Health", icon: Droplet },
         { name: "Contract Mapping", icon: FileText },
-        { name: "Land Preparation", icon: AreaChartIcon },
       ],
       
     },
