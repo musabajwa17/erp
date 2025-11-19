@@ -20,6 +20,7 @@ import {
   LogOut,
   AreaChartIcon,
   LandPlot,
+  Crop,
 } from "lucide-react";
 import Image from "next/image";
 // dashboard content components
@@ -45,6 +46,7 @@ import Harvestschedule from "../dashboard/harvestschedule";
 import Shippingandlogistics from "../dashboard/shippingandlogistics";
 import FarmAnalyticsDashboard from "../dashboard/FarmAnalyticsDashboard";
 import Fields from "../dashboard/Fields"
+import CropPreparationSystem from "../dashboard/CropPreparation";
 export default function Sidebar() {
   const [openStage, setOpenStage] = useState("Stage 1 (Pre-Season)");
   const [selected, setSelected] = useState(null);
@@ -63,8 +65,8 @@ export default function Sidebar() {
         { name: "Field Mapping", icon: Layers },
         { name: "My Fields", icon: MapPin },
         { name: "Land Preparation", icon: AreaChartIcon },
-        { name: "Soil Health", icon: Droplet },
-        { name: "Contract Mapping", icon: FileText },
+        // { name: "Soil Health", icon: Droplet },
+        { name: "Crop Preparation", icon: FileText },
       ],
       
     },
@@ -282,6 +284,7 @@ export default function Sidebar() {
                       "Inventory Management": FileText,
                       "Pest Monitoring": Bug,
                       "Land Preparation": LandPlot,
+                      "Crop Preparation":  Crop,
                     };
 
                     const key = selected || "Dashboard";
@@ -305,6 +308,7 @@ export default function Sidebar() {
                       "Inventory Management": ["Inventory Management", "Track inventory and supplies"],
                       "Pest Monitoring": ["Pest Monitoring", "Monitor pests and interventions"],
                       "Land Preparation": ["Land Preparation", "Prepare your Land with digital tech"],
+                      "Crop Preparation": ["Crop Preparation", "Prepare your Crop with advanced precision"],
                     };
 
                     const key = selected || "Dashboard";
@@ -403,6 +407,8 @@ export default function Sidebar() {
                   return <FarmAnalyticsDashboard/>
                 case "Land Preparation":
                   return <LandPreparation />
+                  case "Crop Preparation":
+                  return <CropPreparationSystem />
                 default:
                   return <Content />;
               }
