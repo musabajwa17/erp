@@ -76,7 +76,7 @@ export default function HeaderContext() {
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
           </button>
 
-          <button
+          {/* <button
             onClick={handleLogin}
             className="group relative px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold rounded-lg hover:shadow-lg hover:shadow-emerald-500/50 hover:scale-105 transition-all duration-200 flex items-center gap-2"
           >
@@ -89,7 +89,7 @@ export default function HeaderContext() {
           >
             <span>Sign Up</span>
             <div className="w-1.5 h-1.5 rounded-full bg-white group-hover:animate-pulse" />
-          </button>
+          </button> */}
         </div>
       </div>
 

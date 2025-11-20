@@ -1,42 +1,653 @@
+// "use client";
+// import React, { useEffect, useState, useMemo } from "react";
+// import {
+//   Sprout,
+//   Tractor,
+//   Calendar,
+//   Clock,
+//   Fuel,
+//   MapPin,
+//   Trash2,
+//   CheckCircle,
+//   Info,
+// } from "lucide-react";
+// import CROP_DATABASE from "../../data/crops";
+
+// export default function LandPreparation() {
+//   const [fields, setFields] = useState([]);
+//   const [tasks, setTasks] = useState([]);
+//   const [showSuccess, setShowSuccess] = useState(false);
+
+//   const ALL_PREPARATION_TYPES = [
+//     "Ploughing",
+//     "Harrowing",
+//     "Leveling / Laser Leveling",
+//     "Ridging",
+//     "Bed Preparation",
+//     "Deep Tillage",
+//     "Rotavator",
+//     "Chiseling",
+//     "Disc Plough",
+//     "Cultivator",
+//     "Transplanting",
+//   ];
+
+//   const ALL_MACHINERY_TYPES = [
+//     "Tractor",
+//     "Laser Leveler",
+//     "Rotavator",
+//     "Cultivator",
+//     "Disc Harrow",
+//     "Ridger",
+//     "Chisel Plough",
+//     "Bed Shaper",
+//     "Seeder",
+//     "Transplanter",
+//   ];
+
+//   const recommendedPrep = {
+//     Wheat: "Leveling / Laser Leveling",
+//     Rice: "Transplanting",
+//     Maize: "Ridging",
+//     Cotton: "Ridging",
+//     Potato: "Bed Preparation",
+//     Onion: "Transplanting",
+//     Sesame: "Harrowing",
+//     Sorghum: "Harrowing",
+//   };
+
+//   const recommendedMachinery = {
+//     Wheat: "Laser Leveler",
+//     Rice: "Transplanter",
+//     Maize: "Ridger",
+//     Cotton: "Ridger",
+//     Potato: "Bed Shaper",
+//     Onion: "Transplanter",
+//     Sesame: "Cultivator",
+//     Sorghum: "Cultivator",
+//   };
+
+//   const seasonOptions = ["Rabi", "Kharif", "Zaid"];
+
+//   const initialForm = {
+//     field: "",
+//     season: "",
+//     crop: "",
+//     variety: "",
+//     landPrepType: "",
+//     machineryType: "",
+//     ownership: "Own",
+//     estimatedHours: "",
+//     fuelEstimate: "",
+//     startDate: "",
+//     endDate: "",
+//   };
+
+//   const [form, setForm] = useState(initialForm);
+
+//   // Fetch Fields
+//   useEffect(() => {
+//     const fetchFields = async () => {
+//       try {
+//         const response = await fetch(
+//           "https://earthscansystems.com/farmerdatauser/userfarm/",
+//           {
+//             headers: {
+//               "Content-Type": "application/json",
+//               Authorization: `Bearer ${localStorage.getItem("access")}`,
+//             },
+//           }
+//         );
+//         const data = await response.json();
+//         setFields(data);
+//       } catch (err) {
+//         console.error("Error fetching fields:", err);
+//       }
+//     };
+//     fetchFields();
+//   }, []);
+
+//   // Load Stored Tasks
+//   useEffect(() => {
+//     const stored = JSON.parse(localStorage.getItem("scheduledTasks")) || [];
+//     setTasks(stored);
+//   }, []);
+
+//   // Handle Form Change
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+
+//     if (name === "field") {
+//       const selected = fields.find(
+//         (f) => f.id === Number(value) || f.id === value
+//       );
+//       const area = selected ? Number(selected.area / 4046.86).toFixed(2) : "";
+//       setForm({ ...form, field: value, area });
+//       return;
+//     }
+
+//     if (name === "crop") {
+//       setForm({
+//         ...form,
+//         crop: value,
+//         variety: "",
+//         landPrepType: recommendedPrep[value] || "",
+//         machineryType: recommendedMachinery[value] || "",
+//       });
+//       return;
+//     }
+
+//     if (name === "startDate") {
+//       setForm({
+//         ...form,
+//         startDate: value,
+//         endDate: form.endDate && form.endDate < value ? "" : form.endDate,
+//       });
+//       return;
+//     }
+
+//     setForm({ ...form, [name]: value });
+//   };
+
+//   // Submit & Save Task
+//   const handleSubmit = () => {
+//     if (
+//       !form.field ||
+//       !form.season ||
+//       !form.crop ||
+//       !form.variety ||
+//       !form.landPrepType ||
+//       !form.machineryType
+//     ) {
+//       alert("Please fill all required fields");
+//       return;
+//     }
+
+//     if (form.startDate && form.endDate && form.startDate > form.endDate) {
+//       alert("Start date cannot be after end date");
+//       return;
+//     }
+
+//     const newTask = {
+//       id: Date.now(),
+//       ...form,
+//     };
+
+//     console.log("📌 Submitted Task:", newTask); // full form data
+
+//     const updated = [...tasks, newTask];
+//     setTasks(updated);
+//     localStorage.setItem("scheduledTasks", JSON.stringify(updated));
+
+//     setShowSuccess(true);
+//     setTimeout(() => setShowSuccess(false), 2500);
+
+//     setForm(initialForm);
+//   };
+
+//   const deleteTask = (id) => {
+//     const updated = tasks.filter((t) => t.id !== id);
+//     setTasks(updated);
+//     localStorage.setItem("scheduledTasks", JSON.stringify(updated));
+//   };
+
+//   const generalTasks = useMemo(
+//     () => tasks.filter((t) => t.landPrepType),
+//     [tasks]
+//   );
+
+//   const today = new Date().toISOString().split("T")[0];
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-6 md:p-10">
+//       {showSuccess && (
+//         <div className="fixed top-6 right-6 z-50 animate-in fade-in slide-in-from-top">
+//           <div className="bg-white rounded-xl shadow-xl p-4 flex items-center gap-3 border-l-4 border-green-600">
+//             <CheckCircle className="text-green-600 w-6 h-6" />
+//             <span className="font-semibold text-gray-800">
+//               Task scheduled successfully!
+//             </span>
+//           </div>
+//         </div>
+//       )}
+
+//       <div className="max-w-6xl mx-auto">
+//         <div className="bg-white/90 shadow-xl rounded-3xl p-8 backdrop-blur-xl border border-white/20 mb-10">
+//           <h2 className="text-3xl font-bold text-gray-700 mb-6 flex items-center gap-2">
+//             <Tractor className="w-7 h-7 text-green-600" />
+//             Land Preparation
+//           </h2>
+
+//           <div className="space-y-6">
+//             {/* Field Selection */}
+//             <div>
+//               <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+//                 <MapPin className="w-4 h-4 text-green-600" />
+//                 Field
+//               </label>
+//               <select
+//                 name="field"
+//                 value={form.field}
+//                 onChange={handleChange}
+//                 className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+//               >
+//                 <option value="">Select field...</option>
+//                 {fields.map((f) => (
+//                   <option key={f.id} value={f.id}>
+//                     {f.farm_name} ({(f.area / 4046.86).toFixed(2)} acres)
+//                   </option>
+//                 ))}
+//               </select>
+//             </div>
+
+//             {/* Season */}
+//             <div>
+//               <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+//                 <Calendar className="w-4 h-4 text-green-600" />
+//                 Season
+//               </label>
+//               <select
+//                 name="season"
+//                 value={form.season}
+//                 onChange={handleChange}
+//                 className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+//               >
+//                 <option value="">Select season...</option>
+//                 {seasonOptions.map((s) => (
+//                   <option key={s}>{s}</option>
+//                 ))}
+//               </select>
+//             </div>
+
+//             {/* Crop */}
+//             <div>
+//               <label className="font-semibold text-gray-700 mb-2 block">
+//                 Crop
+//               </label>
+//               <select
+//                 name="crop"
+//                 value={form.crop}
+//                 onChange={handleChange}
+//                 className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+//               >
+//                 <option value="">Select crop...</option>
+//                 {Object.keys(CROP_DATABASE)
+//                   .filter(
+//                     (c) =>
+//                       form.season === "" ||
+//                       CROP_DATABASE[c].season.includes(form.season)
+//                   )
+//                   .map((c) => (
+//                     <option key={c}>{c}</option>
+//                   ))}
+//               </select>
+//             </div>
+
+//             {/* Crop Details */}
+//             {form.crop && (
+//               <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+//                 <h3 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+//                   <Info className="w-4 h-4 text-emerald-600" />
+//                   Crop Details
+//                 </h3>
+//                 <div className="grid grid-cols-2 gap-4 text-sm">
+//                   <div>
+//                     <p className="text-slate-600 text-xs">Botanical Name</p>
+//                     <p className="font-medium text-slate-900">
+//                       {CROP_DATABASE[form.crop].botanicalName}
+//                     </p>
+//                   </div>
+//                   <div>
+//                     <p className="text-slate-600 text-xs">Season</p>
+//                     <p className="font-medium text-slate-900">
+//                       {CROP_DATABASE[form.crop].season}
+//                     </p>
+//                   </div>
+//                   <div>
+//                     <p className="text-slate-600 text-xs">Days to Maturity</p>
+//                     <p className="font-medium text-slate-900">
+//                       {CROP_DATABASE[form.crop].daysToMaturity} days
+//                     </p>
+//                   </div>
+//                   <div>
+//                     <p className="text-slate-600 text-xs">Optimal Sowing</p>
+//                     <p className="font-medium text-slate-900 text-xs">
+//                       {CROP_DATABASE[form.crop].optimalSowingTime}
+//                     </p>
+//                   </div>
+//                 </div>
+//               </div>
+//             )}
+
+//             {/* Variety */}
+//             {form.crop && (
+//               <div>
+//                 <label className="block text-sm font-semibold text-slate-700 mb-2">
+//                   Variety/Strain *
+//                 </label>
+//                 <select
+//                   value={form.variety}
+//                   name="variety"
+//                   onChange={handleChange}
+//                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+//                 >
+//                   <option value="">Select variety</option>
+//                   {CROP_DATABASE[form.crop].varieties.map((variety) => (
+//                     <option key={variety} value={variety}>
+//                       {variety}
+//                     </option>
+//                   ))}
+//                 </select>
+//               </div>
+//             )}
+
+//             {/* Preparation Type */}
+//             <div>
+//               <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+//                 <Tractor className="w-4 h-4 text-green-600" />
+//                 Preparation Type
+//               </label>
+//               <select
+//                 name="landPrepType"
+//                 value={form.landPrepType}
+//                 onChange={handleChange}
+//                 className="w-full px-4 py-2 border border-slate-300 rounded-lg"
+//               >
+//                 <option value="">Select preparation type</option>
+//                 {ALL_PREPARATION_TYPES.map((type) => (
+//                   <option key={type} value={type}>
+//                     {type}
+//                   </option>
+//                 ))}
+//               </select>
+//             </div>
+
+//             {/* Machinery */}
+//             <div>
+//               <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+//                 <Tractor className="w-4 h-4 text-green-600" />
+//                 Machinery
+//               </label>
+//               <select
+//                 name="machineryType"
+//                 value={form.machineryType}
+//                 onChange={handleChange}
+//                 className="w-full px-4 py-2 border border-slate-300 rounded-lg"
+//               >
+//                 <option value="">Select machinery</option>
+//                 {ALL_MACHINERY_TYPES.map((mach) => (
+//                   <option key={mach} value={mach}>
+//                     {mach}
+//                   </option>
+//                 ))}
+//               </select>
+//             </div>
+
+//             {/* Ownership */}
+//             <div>
+//               <label className="font-semibold text-gray-700 mb-2 block">
+//                 Ownership
+//               </label>
+//               <select
+//                 name="ownership"
+//                 value={form.ownership}
+//                 onChange={handleChange}
+//                 className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+//               >
+//                 <option>Own</option>
+//                 <option>Rented</option>
+//               </select>
+//             </div>
+
+//             {/* Estimated Hours */}
+//             <div>
+//               <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+//                 <Clock className="w-4 h-4 text-green-600" />
+//                 Estimated Hours
+//               </label>
+//               <select
+//                 name="estimatedHours"
+//                 value={form.estimatedHours}
+//                 onChange={handleChange}
+//                 className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+//               >
+//                 <option value="">Select...</option>
+//                 {[...Array(9)].map((_, i) => (
+//                   <option key={i + 1}>{i + 1} hour</option>
+//                 ))}
+//               </select>
+//             </div>
+
+//             {/* Fuel */}
+//             <div>
+//               <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+//                 <Fuel className="w-4 h-4 text-green-600" />
+//                 Fuel Estimate
+//               </label>
+//               <select
+//                 name="fuelEstimate"
+//                 value={form.fuelEstimate}
+//                 onChange={handleChange}
+//                 className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+//               >
+//                 <option value="">Fuel...</option>
+//                 {[...Array(8)].map((_, i) => (
+//                   <option key={i}>{(i + 1) * 5} Liters</option>
+//                 ))}
+//               </select>
+//             </div>
+
+//             {/* Dates */}
+//             <div className="grid grid-cols-2 gap-6">
+//               <div>
+//                 <label className="font-semibold text-gray-700 mb-2 block">
+//                   Start Date
+//                 </label>
+//                 <input
+//                   type="date"
+//                   name="startDate"
+//                   value={form.startDate}
+//                   onChange={handleChange}
+//                   className="w-full p-4 border-2 rounded-xl focus:ring-green-500"
+//                   min={today}
+//                 />
+//               </div>
+
+//               <div>
+//                 <label className="font-semibold text-gray-700 mb-2 block">
+//                   End Date
+//                 </label>
+//                 <input
+//                   type="date"
+//                   name="endDate"
+//                   value={form.endDate}
+//                   onChange={handleChange}
+//                   className="w-full p-4 border-2 rounded-xl focus:ring-green-500"
+//                   min={form.startDate || today}
+//                 />
+//               </div>
+//             </div>
+
+//             <button
+//               onClick={handleSubmit}
+//               className="w-full mt-4 bg-green-600 text-white py-4 rounded-2xl font-bold hover:bg-green-700 transition-all"
+//             >
+//               Schedule Task
+//             </button>
+//           </div>
+//         </div>
+
+//         {/* Scheduled Tasks */}
+//         <div className="bg-white/90 shadow-xl rounded-3xl p-8 backdrop-blur-xl border border-white/20">
+//           <h3 className="text-2xl font-bold flex items-center gap-3 text-gray-700 mb-6">
+//             <CheckCircle className="w-7 h-7 text-green-600" />
+//             Scheduled Tasks
+//           </h3>
+
+//           {generalTasks.length === 0 ? (
+//             <div className="text-center py-12 text-gray-500">
+//               <Calendar className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+//               No tasks scheduled yet.
+//             </div>
+//           ) : (
+//             <div className="space-y-5 max-h-[600px] overflow-y-auto pr-2">
+//               {generalTasks.map((task) => (
+//                 <div
+//                   key={task.id}
+//                   className="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-2xl border-2 border-blue-200 shadow-md hover:shadow-lg transition"
+//                 >
+//                   <div className="flex justify-between mb-3">
+//                     <h4 className="font-bold text-blue-800">
+//                       {fields.find((f) => f.id === Number(task.field))
+//                         ?.farm_name || "Field"}
+//                     </h4>
+//                     <button
+//                       onClick={() => deleteTask(task.id)}
+//                       className="text-red-500 hover:bg-red-100 p-2 rounded-lg"
+//                     >
+//                       <Trash2 className="w-5 h-5" />
+//                     </button>
+//                   </div>
+
+//                   <div className="text-sm text-gray-700 space-y-2">
+//                     <p className="flex items-center gap-2">
+//                       <Sprout className="w-4 h-4 text-blue-600" />
+//                       {task.crop} ({task.variety})
+//                     </p>
+//                     <p className="flex items-center gap-2">
+//                       <MapPin className="w-4 h-4 text-blue-600" />
+//                       {task.landPrepType} - {task.machineryType}
+//                     </p>
+//                     <p className="flex items-center gap-2">
+//                       <Calendar className="w-4 h-4 text-blue-600" />
+//                       {task.season}
+//                     </p>
+//                     <p className="flex items-center gap-2">
+//                       <Clock className="w-4 h-4 text-blue-600" />
+//                       {task.estimatedHours} | {task.fuelEstimate}
+//                     </p>
+//                     {task.startDate && task.endDate && (
+//                       <p className="flex items-center gap-2">
+//                         <Calendar className="w-4 h-4 text-blue-600" />
+//                         {task.startDate} → {task.endDate}
+//                       </p>
+//                     )}
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 "use client";
-import React, { useEffect, useState } from "react";
-import { Sprout, Tractor, Calendar, Clock, Fuel, User, MapPin, Trash2, CheckCircle } from "lucide-react";
+import React, { useEffect, useState, useMemo } from "react";
+import {
+  Sprout,
+  Tractor,
+  Calendar,
+  Clock,
+  Fuel,
+  MapPin,
+  Trash2,
+  CheckCircle,
+  Info,
+} from "lucide-react";
+import CROP_DATABASE from "../../data/crops";
 
 export default function LandPreparation() {
-  const [mode, setMode] = useState("general");
   const [fields, setFields] = useState([]);
-  const [form, setForm] = useState({
-    field: "",
-    area: "",
-    season: "",
-    landPrepType: "",
-    machineryType: "",
-    ownership: "Own",
-    operator: "",
-    estimatedHours: "",
-    fuelEstimate: "",
-    cropType: "",
-    variety: "",
-    startDate: "",
-    endDate: "",
-  });
   const [tasks, setTasks] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const cropOptions = [
-    "Wheat",
-    "Cotton",
-    "Corn",
-    "Soybean",
-    "Potato",
-    "Rice",
-    "Barley",
-    "Sugarcane",
-    "Tomato",
-    "Onion",
+  const ALL_PREPARATION_TYPES = [
+    "Ploughing",
+    "Harrowing",
+    "Leveling / Laser Leveling",
+    "Ridging",
+    "Bed Preparation",
+    "Deep Tillage",
+    "Rotavator",
+    "Chiseling",
+    "Disc Plough",
+    "Cultivator",
+    "Transplanting",
   ];
+
+  const ALL_MACHINERY_TYPES = [
+    "Tractor",
+    "Laser Leveler",
+    "Rotavator",
+    "Cultivator",
+    "Disc Harrow",
+    "Ridger",
+    "Chisel Plough",
+    "Bed Shaper",
+    "Seeder",
+    "Transplanter",
+  ];
+
+  const recommendedPrep = {
+    Wheat: "Leveling / Laser Leveling",
+    Rice: "Transplanting",
+    Maize: "Ridging",
+    Cotton: "Ridging",
+    Potato: "Bed Preparation",
+    Onion: "Transplanting",
+    Sesame: "Harrowing",
+    Sorghum: "Harrowing",
+  };
+
+  const recommendedMachinery = {
+    Wheat: "Laser Leveler",
+    Rice: "Transplanter",
+    Maize: "Ridger",
+    Cotton: "Ridger",
+    Potato: "Bed Shaper",
+    Onion: "Transplanter",
+    Sesame: "Cultivator",
+    Sorghum: "Cultivator",
+  };
+
+  // Map preparation type to machinery if user changes prep type manually
+  const prepToMachinery = {
+    "Ploughing": "Tractor",
+    "Harrowing": "Cultivator",
+    "Leveling / Laser Leveling": "Laser Leveler",
+    "Ridging": "Ridger",
+    "Bed Preparation": "Bed Shaper",
+    "Deep Tillage": "Chisel Plough",
+    "Rotavator": "Rotavator",
+    "Chiseling": "Chisel Plough",
+    "Disc Plough": "Disc Harrow",
+    "Cultivator": "Cultivator",
+    "Transplanting": "Transplanter",
+  };
+
   const seasonOptions = ["Rabi", "Kharif", "Zaid"];
 
+  const initialForm = {
+    field: "",
+    season: "",
+    crop: "",
+    variety: "",
+    landPrepType: "",
+    machineryType: "",
+    ownership: "Own",
+    estimatedHours: "",
+    fuelEstimate: "",
+    startDate: "",
+    endDate: "",
+  };
+
+  const [form, setForm] = useState(initialForm);
+
+  // Fetch Fields
   useEffect(() => {
     const fetchFields = async () => {
       try {
@@ -58,520 +669,368 @@ export default function LandPreparation() {
     fetchFields();
   }, []);
 
+  // Load Stored Tasks
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("scheduledTasks")) || [];
-    setTasks(storedTasks);
+    const stored = JSON.parse(localStorage.getItem("scheduledTasks")) || [];
+    setTasks(stored);
   }, []);
 
+  // Automatically calculate end date based on start date & crop/variety
+  const calculateEndDate = (startDate) => {
+    if (!startDate) return "";
+    // Example: default duration = 2 days for all tasks (can be adjusted per crop)
+    const duration = 2; 
+    const start = new Date(startDate);
+    start.setDate(start.getDate() + duration);
+    return start.toISOString().split("T")[0];
+  };
+
+  // Handle Form Change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "field") {
-      const selectedField = fields.find((f) => f.id === value);
-      const areaInAcres = selectedField
-        ? (selectedField.area / 4046.86).toFixed(2)
-        : "";
-      setForm({ ...form, field: value, area: areaInAcres });
+      const selected = fields.find(
+        (f) => f.id === Number(value) || f.id === value
+      );
+      const area = selected ? Number(selected.area / 4046.86).toFixed(2) : "";
+      setForm({ ...form, field: value, area });
+      return;
+    }
+
+    if (name === "crop") {
+      setForm({
+        ...form,
+        crop: value,
+        variety: "",
+        landPrepType: recommendedPrep[value] || "",
+        machineryType: recommendedMachinery[value] || "",
+      });
+      return;
+    }
+
+    if (name === "landPrepType") {
+      // Update machinery based on prep type
+      setForm({
+        ...form,
+        landPrepType: value,
+        machineryType: prepToMachinery[value] || "",
+      });
+      return;
+    }
+
+    if (name === "startDate") {
+      setForm({
+        ...form,
+        startDate: value,
+        endDate: calculateEndDate(value),
+      });
       return;
     }
 
     setForm({ ...form, [name]: value });
   };
 
+  // Submit & Save Task
   const handleSubmit = () => {
-    const newTask = { ...form, id: Date.now() };
-    const updatedTasks = [...tasks, newTask];
-    setTasks(updatedTasks);
-    localStorage.setItem("scheduledTasks", JSON.stringify(updatedTasks));
-    
+    if (
+      !form.field ||
+      !form.season ||
+      !form.crop ||
+      !form.variety ||
+      !form.landPrepType ||
+      !form.machineryType
+    ) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    if (form.startDate && form.endDate && form.startDate > form.endDate) {
+      alert("Start date cannot be after end date");
+      return;
+    }
+
+    const newTask = {
+      id: Date.now(),
+      ...form,
+    };
+
+    console.log("📌 Submitted Task:", newTask); // full form data
+
+    const updated = [...tasks, newTask];
+    setTasks(updated);
+    localStorage.setItem("scheduledTasks", JSON.stringify(updated));
+
     setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
-    
-    setForm({
-      field: "",
-      area: "",
-      season: "",
-      landPrepType: "",
-      machineryType: "",
-      ownership: "Own",
-      operator: "",
-      estimatedHours: "",
-      fuelEstimate: "",
-      cropType: "",
-      variety: "",
-      startDate: "",
-      endDate: "",
-    });
+    setTimeout(() => setShowSuccess(false), 2500);
+
+    setForm(initialForm);
   };
 
   const deleteTask = (id) => {
-    const updatedTasks = tasks.filter(t => t.id !== id);
-    setTasks(updatedTasks);
-    localStorage.setItem("scheduledTasks", JSON.stringify(updatedTasks));
+    const updated = tasks.filter((t) => t.id !== id);
+    setTasks(updated);
+    localStorage.setItem("scheduledTasks", JSON.stringify(updated));
   };
 
+  const generalTasks = useMemo(
+    () => tasks.filter((t) => t.landPrepType),
+    [tasks]
+  );
+
+  const today = new Date().toISOString().split("T")[0];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-4 md:p-8">
-      {/* Success Notification */}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-6 md:p-10">
       {showSuccess && (
-        <div className="fixed top-6 right-6 z-50 animate-in slide-in-from-top duration-300">
-          <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 border-l-4 border-green-500">
-            <CheckCircle className="text-green-500 w-6 h-6" />
-            <span className="font-semibold text-gray-800">Task scheduled successfully!</span>
+        <div className="fixed top-6 right-6 z-50 animate-in fade-in slide-in-from-top">
+          <div className="bg-white rounded-xl shadow-xl p-4 flex items-center gap-3 border-l-4 border-green-600">
+            <CheckCircle className="text-green-600 w-6 h-6" />
+            <span className="font-semibold text-gray-800">
+              Task scheduled successfully!
+            </span>
           </div>
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        {/* <div className="text-center mb-12 animate-in fade-in duration-700">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl mb-4 shadow-lg">
-            <Sprout className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-green-700 via-emerald-600 to-teal-600 bg-clip-text text-transparent mb-3">
+      <div className="max-w-6xl mx-auto space-y-10">
+        <div className="bg-white/90 shadow-xl rounded-3xl p-8 backdrop-blur-xl border border-white/20">
+          <h2 className="text-3xl font-bold text-gray-700 mb-6 flex items-center gap-2">
+            <Tractor className="w-7 h-7 text-green-600" />
             Land Preparation
-          </h1>
-          <p className="text-gray-600 text-lg">Prepare your fields with precision and care</p>
-        </div> */}
+          </h2>
 
-        <div className="grid lg:grid-cols-1 gap-8">
-          {/* Form Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20">
-              {/* Mode Selection */}
-              <div className="flex gap-3 mb-8">
-                <button
-                  type="button"
-                  className={`flex-1 py-4 px-6 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-100 cursor-pointer ${
-                    mode === "general"
-                      ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/30"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setMode("general")}
-                >
-                  <Tractor className="w-5 h-5 inline mr-2" />
-                  General Prep
-                </button>
-                <button
-                  type="button"
-                  className={`flex-1 py-4 px-6 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-100 cursor-pointer ${
-                    mode === "crop"
-                      ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/30"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setMode("crop")}
-                >
-                  <Sprout className="w-5 h-5 inline mr-2" />
-                  Crop-Specific
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                {/* Field Selection */}
-                <div className="group">
-                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                    <MapPin className="w-4 h-4 text-green-600" />
-                    Select Field
-                  </label>
-                  <select
-                    name="field"
-                    value={form.field}
-                    onChange={handleChange}
-                    className="w-full border-2 border-gray-200 cursor-pointer p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none bg-white"
-                    required
-                  >
-                    <option value="">Choose your field...</option>
-                    {fields.map((field) => (
-                      <option key={field.id} value={field.id}>
-                        {field.farm_name} ({(field.area / 4046.86).toFixed(2)} acres)
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Season */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                    <Calendar className="w-4 h-4 text-green-600" />
-                    Season
-                  </label>
-                  <select
-                    name="season"
-                    value={form.season}
-                    onChange={handleChange}
-                    className="w-full border-2 border-gray-200 cursor-pointer p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none bg-white"
-                  >
-                    <option value="">Select season...</option>
-                    {seasonOptions.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Land Prep Type or Crop */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                    {mode === "general" ? <Tractor className="w-4 h-4 text-green-600" /> : <Sprout className="w-4 h-4 text-green-600" />}
-                    {mode === "general" ? "Preparation Type" : "Crop Type"}
-                  </label>
-                  {mode === "general" ? (
-                    <select
-                      name="landPrepType"
-                      value={form.landPrepType}
-                      onChange={handleChange}
-                      className="w-full border-2 border-gray-200 cursor-pointer p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none bg-white"
-                      required
-                    >
-                      <option value="">Select type...</option>
-                      <option>Ploughing</option>
-                      <option>Harrowing</option>
-                      <option>Leveling / Laser leveling</option>
-                      <option>Deep tillage / subsoiling</option>
-                      <option>Irrigation setup</option>
-                    </select>
-                  ) : (
-                    <select
-                      name="cropType"
-                      value={form.cropType}
-                      onChange={handleChange}
-                      className="w-full border-2 border-gray-200 cursor-pointer p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none bg-white"
-                      required
-                    >
-                      <option value="">Select crop...</option>
-                      {cropOptions.map((crop) => (
-                        <option key={crop} value={crop}>
-                          {crop}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-
-                {/* Machinery Type */}
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                    <Tractor className="w-4 h-4 text-green-600" />
-                    Machinery Type
-                  </label>
-                  <select
-                    name="machineryType"
-                    value={form.machineryType}
-                    onChange={handleChange}
-                    className="w-full border-2 border-gray-200 cursor-pointer p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none bg-white"
-                  >
-                    <option value="">Select machinery...</option>
-                    {["Tractor", "Plough", "Rotavator", "Harrow", "Grader", "Laser-leveler", "Ridger"].map((m) => (
-                      <option key={m} value={m}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Ownership & Operator Row */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
-                      Ownership
-                    </label>
-                    <select
-                      name="ownership"
-                      value={form.ownership}
-                      onChange={handleChange}
-                      className="w-full border-2 cursor-pointer border-gray-200 p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none bg-white"
-                    >
-                      <option>Own</option>
-                      <option>Rented</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                      <User className="w-4 h-4 text-green-600" />
-                      Operator
-                    </label>
-                    <input
-                      type="text"
-                      name="operator"
-                      value={form.operator}
-                      onChange={handleChange}
-                      placeholder="Operator name..."
-                      className="w-full border-2 border-gray-200 p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Hours & Fuel Row */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                      <Clock className="w-4 h-4 text-green-600" />
-                      Machine Hours
-                    </label>
-                    <select
-                      name="estimatedHours"
-                      value={form.estimatedHours}
-                      onChange={handleChange}
-                      className="w-full border-2 cursor-pointer border-gray-200 p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none bg-white"
-                    >
-                      <option value="">Select hours...</option>
-                      {Array.from({ length: 9 }, (_, i) => i + 1).map((h) => (
-                        <option key={h} value={h}>
-                          {h} hour{h > 1 ? "s" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                      <Fuel className="w-4 h-4 text-green-600" />
-                      Fuel Estimate
-                    </label>
-                    <select
-                      name="fuelEstimate"
-                      value={form.fuelEstimate}
-                      onChange={handleChange}
-                      className="w-full border-2 cursor-pointer border-gray-200 p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none bg-white"
-                    >
-                      <option value="">Select fuel...</option>
-                      {Array.from({ length: 8 }, (_, i) => (i + 1) * 5).map((f) => (
-                        <option key={f} value={f}>
-                          {f} Liters
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Date Range */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                      <Calendar className="w-4 h-4 text-green-600" />
-                      Start Date
-                    </label>
-                    <input
-                      type="date"
-                      name="startDate"
-                      value={form.startDate}
-                      onChange={handleChange}
-                      className="w-full border-2 cursor-pointer border-gray-200 p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-                      <Calendar className="w-4 h-4 text-green-600" />
-                      End Date
-                    </label>
-                    <input
-                      type="date"
-                      name="endDate"
-                      value={form.endDate}
-                      onChange={handleChange}
-                      className="w-full border-2 cursor-pointer border-gray-200 p-4 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleSubmit}
-                  className="w-full bg-gradient-to-r cursor-pointer from-green-500 to-emerald-600 text-white font-bold py-5 rounded-2xl hover:shadow-2xl hover:shadow-green-500/30 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  Schedule Task
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Scheduled Tasks */}
-          <div className="lg:col-span-2">
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20 sticky top-8">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
-                <CheckCircle className="w-7 h-7 text-green-600" />
-                Scheduled Tasks
-              </h3>
-              
-              {tasks.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Calendar className="w-10 h-10 text-gray-400" />
-                  </div>
-                  <p className="text-gray-500">No tasks scheduled yet</p>
-                </div>
-              ) : (
-               <div className="space-y-6 max-h-[600px] overflow-y-auto pr-2">
-  {/* General Land Preparation Tasks */}
-  {tasks.filter(t => t.landPrepType).length > 0 && (
-    <div>
-      <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-        <Tractor className="w-4 h-4" />
-        General Preparation
-      </h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {tasks.filter(t => t.landPrepType).map((task, idx) => (
-          <div
-            key={task.id}
-            className="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-2xl border-2 border-blue-200 hover:shadow-lg transition-all duration-300 animate-in slide-in-from-bottom"
-            style={{ animationDelay: `${idx * 100}ms` }}
-          >
-            <div className="flex justify-between items-start mb-3">
-              <h4 className="font-bold text-blue-800">
-                {fields.find((f) => f.id === task.field)?.farm_name || "Field"}
-              </h4>
-              <button
-                onClick={() => deleteTask(task.id)}
-                className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2 rounded-lg transition-all"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-            
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-gray-700">
-                <MapPin className="w-4 h-4 text-blue-600" />
-                <span>{task.area} acres</span>
-              </div>
-              
-              <div className="flex items-center gap-2 text-gray-700">
-                <Calendar className="w-4 h-4 text-blue-600" />
-                <span>{task.season}</span>
-              </div>
-              
-              <div className="flex items-center gap-2 text-gray-700">
-                <Tractor className="w-4 h-4 text-blue-600" />
-                <span className="font-semibold">{task.landPrepType}</span>
-              </div>
-              
-              {task.machineryType && (
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Tractor className="w-4 h-4 text-blue-600" />
-                  <span>{task.machineryType} ({task.ownership})</span>
-                </div>
-              )}
-              
-              {task.operator && (
-                <div className="flex items-center gap-2 text-gray-700">
-                  <User className="w-4 h-4 text-blue-600" />
-                  <span>{task.operator}</span>
-                </div>
-              )}
-              
-              <div className="flex items-center gap-4 text-gray-700">
-                {task.estimatedHours && (
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4 text-blue-600" />
-                    <span>{task.estimatedHours}h</span>
-                  </div>
-                )}
-                {task.fuelEstimate && (
-                  <div className="flex items-center gap-1">
-                    <Fuel className="w-4 h-4 text-blue-600" />
-                    <span>{task.fuelEstimate}L</span>
-                  </div>
-                )}
-              </div>
-              
-              {(task.startDate || task.endDate) && (
-                <div className="pt-2 mt-2 border-t border-blue-200 text-xs text-gray-600">
-                  {task.startDate} → {task.endDate}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )}
-
-  {/* Crop-Specific Tasks */}
-  {tasks.filter(t => t.cropType).length > 0 && (
-    <div>
-      <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-        <Sprout className="w-4 h-4" />
-        Crop-Specific
-      </h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {tasks.filter(t => t.cropType).map((task, idx) => (
-          <div
-            key={task.id}
-            className="bg-gradient-to-br from-green-50 to-emerald-50 p-5 rounded-2xl border-2 border-green-200 hover:shadow-lg transition-all duration-300 animate-in slide-in-from-bottom"
-            style={{ animationDelay: `${idx * 100}ms` }}
-          >
-            <div className="flex justify-between items-start mb-3">
-              <h4 className="font-bold text-green-800">
-                {fields.find((f) => f.id === task.field)?.farm_name || "Field"}
-              </h4>
-              <button
-                onClick={() => deleteTask(task.id)}
-                className="text-red-500 hover:text-red-700 hover:bg-red-100 p-2 rounded-lg transition-all"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-            
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Field */}
+            <div>
+              <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
                 <MapPin className="w-4 h-4 text-green-600" />
-                <span>{task.area} acres</span>
-              </div>
-              
-              <div className="flex items-center gap-2 text-gray-700">
+                Field
+              </label>
+              <select
+                name="field"
+                value={form.field}
+                onChange={handleChange}
+                className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+              >
+                <option value="">Select field...</option>
+                {fields.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.farm_name} ({(f.area / 4046.86).toFixed(2)} acres)
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Season */}
+            <div>
+              <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
                 <Calendar className="w-4 h-4 text-green-600" />
-                <span>{task.season}</span>
+                Season
+              </label>
+              <select
+                name="season"
+                value={form.season}
+                onChange={handleChange}
+                className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+              >
+                <option value="">Select season...</option>
+                {seasonOptions.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Crop */}
+            <div>
+              <label className="font-semibold text-gray-700 mb-2 block">
+                Crop
+              </label>
+              <select
+                name="crop"
+                value={form.crop}
+                onChange={handleChange}
+                className="w-full p-4 border-2 rounded-xl bg-white focus:ring-green-500"
+              >
+                <option value="">Select crop...</option>
+                {Object.keys(CROP_DATABASE)
+                  .filter(
+                    (c) =>
+                      form.season === "" ||
+                      CROP_DATABASE[c].season.includes(form.season)
+                  )
+                  .map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+              </select>
+            </div>
+
+            {/* Variety */}
+            {form.crop && (
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  Variety/Strain *
+                </label>
+                <select
+                  value={form.variety}
+                  name="variety"
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                >
+                  <option value="">Select variety</option>
+                  {CROP_DATABASE[form.crop].varieties.map((variety) => (
+                    <option key={variety} value={variety}>
+                      {variety}
+                    </option>
+                  ))}
+                </select>
               </div>
-              
-              <div className="flex items-center gap-2 text-gray-700">
-                <Sprout className="w-4 h-4 text-green-600" />
-                <span className="font-semibold">{task.cropType}</span>
-              </div>
-              
-              {task.machineryType && (
-                <div className="flex items-center gap-2 text-gray-700">
-                  <Tractor className="w-4 h-4 text-green-600" />
-                  <span>{task.machineryType} ({task.ownership})</span>
-                </div>
-              )}
-              
-              {task.operator && (
-                <div className="flex items-center gap-2 text-gray-700">
-                  <User className="w-4 h-4 text-green-600" />
-                  <span>{task.operator}</span>
-                </div>
-              )}
-              
-              <div className="flex items-center gap-4 text-gray-700">
-                {task.estimatedHours && (
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4 text-green-600" />
-                    <span>{task.estimatedHours}h</span>
-                  </div>
-                )}
-                {task.fuelEstimate && (
-                  <div className="flex items-center gap-1">
-                    <Fuel className="w-4 h-4 text-green-600" />
-                    <span>{task.fuelEstimate}L</span>
-                  </div>
-                )}
-              </div>
-              
-              {(task.startDate || task.endDate) && (
-                <div className="pt-2 mt-2 border-t border-green-200 text-xs text-gray-600">
-                  {task.startDate} → {task.endDate}
-                </div>
-              )}
+            )}
+
+            {/* Preparation Type */}
+            <div>
+              <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+                <Tractor className="w-4 h-4 text-green-600" />
+                Preparation Type
+              </label>
+              <select
+                name="landPrepType"
+                value={form.landPrepType}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg"
+              >
+                <option value="">Select preparation type</option>
+                {ALL_PREPARATION_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Machinery */}
+            <div>
+              <label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+                <Tractor className="w-4 h-4 text-green-600" />
+                Machinery
+              </label>
+              <select
+                name="machineryType"
+                value={form.machineryType}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg"
+              >
+                <option value="">Select machinery</option>
+                {ALL_MACHINERY_TYPES.map((mach) => (
+                  <option key={mach} value={mach}>
+                    {mach}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Start Date */}
+            <div>
+              <label className="font-semibold text-gray-700 mb-2 block">
+                Start Date
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                value={form.startDate}
+                onChange={handleChange}
+                className="w-full p-4 border-2 rounded-xl focus:ring-green-500"
+                min={today}
+              />
+            </div>
+
+            {/* End Date */}
+            <div>
+              <label className="font-semibold text-gray-700 mb-2 block">
+                End Date
+              </label>
+              <input
+                type="date"
+                name="endDate"
+                value={form.endDate}
+                onChange={handleChange}
+                className="w-full p-4 border-2 rounded-xl focus:ring-green-500"
+                min={form.startDate || today}
+              />
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  )}
-</div>
-              )}
+
+          <button
+            onClick={handleSubmit}
+            className="w-full mt-6 bg-green-600 text-white py-4 rounded-2xl font-bold hover:bg-green-700 transition-all"
+          >
+            Schedule Task
+          </button>
+        </div>
+
+        {/* Scheduled Tasks section remains the same */}
+        <div className="bg-white/90 shadow-xl rounded-3xl p-8 backdrop-blur-xl border border-white/20">
+          <h3 className="text-2xl font-bold flex items-center gap-3 text-gray-700 mb-6">
+            <CheckCircle className="w-7 h-7 text-green-600" />
+            Scheduled Tasks
+          </h3>
+
+          {generalTasks.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <Calendar className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+              No tasks scheduled yet.
             </div>
-          </div>
+          ) : (
+            <div className="space-y-5 max-h-[600px] overflow-y-auto pr-2">
+              {generalTasks.map((task) => (
+                <div
+                  key={task.id}
+                  className="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-2xl border-2 border-blue-200 shadow-md hover:shadow-lg transition"
+                >
+                  <div className="flex justify-between mb-3">
+                    <h4 className="font-bold text-blue-800">
+                      {fields.find((f) => f.id === Number(task.field))
+                        ?.farm_name || "Field"}
+                    </h4>
+                    <button
+                      onClick={() => deleteTask(task.id)}
+                      className="text-red-500 hover:bg-red-100 p-2 rounded-lg"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="text-sm text-gray-700 space-y-2">
+                    <p className="flex items-center gap-2">
+                      <Sprout className="w-4 h-4 text-blue-600" />
+                      {task.crop} ({task.variety})
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-blue-600" />
+                      {task.landPrepType} - {task.machineryType}
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-blue-600" />
+                      {task.season}
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-blue-600" />
+                      {task.estimatedHours} | {task.fuelEstimate}
+                    </p>
+                    {task.startDate && task.endDate && (
+                      <p className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-blue-600" />
+                        {task.startDate} → {task.endDate}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+

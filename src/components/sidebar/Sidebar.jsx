@@ -21,6 +21,7 @@ import {
   AreaChartIcon,
   LandPlot,
   Crop,
+  Sprout,
 } from "lucide-react";
 import Image from "next/image";
 // dashboard content components
@@ -66,7 +67,7 @@ export default function Sidebar() {
         { name: "My Fields", icon: MapPin },
         { name: "Land Preparation", icon: AreaChartIcon },
         // { name: "Soil Health", icon: Droplet },
-        { name: "Crop Preparation", icon: FileText },
+        { name: "Crop Preparation", icon: Sprout },
       ],
       
     },
@@ -308,7 +309,7 @@ export default function Sidebar() {
                       "Inventory Management": ["Inventory Management", "Track inventory and supplies"],
                       "Pest Monitoring": ["Pest Monitoring", "Monitor pests and interventions"],
                       "Land Preparation": ["Land Preparation", "Prepare your Land with digital tech"],
-                      "Crop Preparation": ["Crop Preparation", "Prepare your Crop with advanced precision"],
+                      "Crop Preparation": ["Crop Preparation", "Plan, track and optimize your farming operations"],
                     };
 
                     const key = selected || "Dashboard";
